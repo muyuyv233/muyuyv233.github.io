@@ -7,4 +7,4 @@ redirect_from:
   - /about.html
 ---
 
-**[微博](https://muyuyv233-muyuyvwzwb.gitblog.xyz/)**
+[微博](https://muyuyv233-muyuyvwzwb.gitblog.xyz/)![输入图片说明](/imgs/2025-01-24/iMJnrr6EfXPm7y7r.png)
