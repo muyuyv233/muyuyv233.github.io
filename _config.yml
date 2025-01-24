@@ -21,9 +21,9 @@ repository               : "academicpages/academicpages.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.png"
+  avatar           : "https://s21.ax1x.com/2025/01/24/pEEefhR.jpg"
   name             : "muyuyv"
-  pronouns         : " **[发微博](https://github.com/muyuyv233/muyuyvWZWB/issues/new)**"# example: "she/her"  
+  pronouns         : " he "# example: "she/her"  
   bio              : "哈都木有"
   location         : "不透露"
   employer         : "不透露"
