@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>马里奥卡牌游戏</title>
+    <style>
+        body {
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            background-color: #E10F17;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #FBD000;
+            text-shadow: 3px 3px 0 #000;
+            font-size: 2.5em;
+        }
+        
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #4B8BBE;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .card {
+            width: 150px;
+            height: 220px;
+            background-color: #FBD000;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #fff;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card.selected {
+            border-color: #E10F17;
+            transform: translateY(-10px);
+        }
+        
+        .card-image {
+            height: 90px;
+            background-color: #fff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .card-image img {
+            max-height: 80%;
+            max-width: 80%;
+        }
+        
+        .card-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #E10F17;
+        }
+        
+        .card-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 8px 0;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            font-size: 18px;
+            color: #E10F17;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .card-ability {
+            font-size: 11px;
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            padding: 5px;
+        }
+        
+        .game-controls {
+            margin: 20px 0;
+        }
+        
+        button {
+            background-color: #FBD000;
+            color: #E10F17;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            background-color: #FFE570;
+            transform: scale(1.05);
+        }
+        
+        .battle-area {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        
+        .player-area, .opponent-area {
+            width: 45%;
+            min-height: 200px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .game-info {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #E10F17 25%, #FBD000 25%, #FBD000 50%, #E10F17 50%, #E10F17 75%, #FBD000 75%);
+            background-size: 20px 20px;
+        }
+        
+        .card-back .card-image {
+            background-color: transparent;
+        }
+        
+        .card-back .card-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>马里奥卡牌对战</h1>
+    
+    <div class="game-container">
+        <div class="cards-container" id="cards-container">
+            <!-- 卡牌将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="game-controls">
+            <button id="battle-btn">开始战斗</button>
+            <button id="reset-btn">重置游戏</button>
+        </div>
+        
+        <div class="battle-area">
+            <div class="player-area" id="player-area">
+                <h2>你的卡牌</h2>
+            </div>
+            <div class="opponent-area" id="opponent-area">
+                <h2>对手卡牌</h2>
+            </div>
+        </div>
+        
+        <div class="game-info" id="game-info">
+            <p>选择你的卡牌开始游戏！</p>
+        </div>
+    </div>
+
+    <script>
+        // 卡牌数据
+        const marioCards = [
+            {
+                id: 1,
+                name: "超级马里奥",
+                image: "M",
+                attack: 8,
+                defense: 7,
+                ability: "跳跃攻击: 攻击时额外造成1点伤害",
+                color: "#E10F17"
+            },
+            {
+                id: 2,
+                name: "路易吉",
+                image: "L",
+                attack: 7,
+                defense: 8,
+                ability: "高跳: 受到攻击时减少1点伤害",
+                color: "#2D9E2D"
+            },
+            {
+                id: 3,
+                name: "桃花公主",
+                image: "P",
+                attack: 5,
+                defense: 9,
+                ability: "治愈: 每回合恢复1点防御",
+                color: "#FF9EB5"
+            },
+            {
+                id: 4,
+                name: "酷霸王",
+                image: "B",
+                attack: 9,
+                defense: 6,
+                ability: "火焰吐息: 攻击时无视1点防御",
+                color: "#E67E22"
+            },
+            {
+                id: 5,
+                name: "奇诺比奥",
+                image: "T",
+                attack: 4,
+                defense: 10,
+                ability: "蘑菇力量: 防御永久增加1点",
+                color: "#FFFFFF"
+            },
+            {
+                id: 6,
+                name: "耀西",
+                image: "Y",
+                attack: 6,
+                defense: 7,
+                ability: "蛋投掷: 攻击时有50%几率造成双倍伤害",
+                color: "#6CBF45"
+            }
+        ];
+
+        // 游戏状态
+        let selectedCard = null;
+        let playerCard = null;
+        let opponentCard = null;
+        
+        // 初始化游戏
+        function initGame() {
+            const cardsContainer = document.getElementById('cards-container');
+            cardsContainer.innerHTML = '';
+            
+            // 创建卡牌
+            marioCards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                cardElement.dataset.id = card.id;
+                
+                cardElement.innerHTML = `
+                    <div class="card-image">
+                        <span style="font-size: 40px; color: ${card.color}; font-weight: bold;">${card.image}</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">${card.attack}</div>
+                                <div class="stat-label">攻击</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${card.defense}</div>
+                                <div class="stat-label">防御</div>
+                            </div>
+                        </div>
+                        <div class="card-ability">${card.ability}</div>
+                    </div>
+                `;
+                
+                cardElement.addEventListener('click', () => selectCard(card, cardElement));
+                cardsContainer.appendChild(cardElement);
+            });
+            
+            // 清空战斗区域
+            document.getElementById('player-area').innerHTML = '<h2>你的卡牌</h2>';
+            document.getElementById('opponent-area').innerHTML = '<h2>对手卡牌</h2>';
+            document.getElementById('game-info').innerHTML = '<p>选择你的卡牌开始游戏！</p>';
+            
+            selectedCard = null;
+            playerCard = null;
+            opponentCard = null;
+        }
+        
+        // 选择卡牌
+        function selectCard(card, cardElement) {
+            // 移除之前的选择
+            const previouslySelected = document.querySelector('.card.selected');
+            if (previouslySelected) {
+                previouslySelected.classList.remove('selected');
+            }
+            
+            // 选择新卡牌
+            cardElement.classList.add('selected');
+            selectedCard = card;
+            
+            document.getElementById('game-info').innerHTML = `<p>已选择: <strong>${card.name}</strong></p>`;
+        }
+        
+        // 开始战斗
+        function startBattle() {
+            if (!selectedCard) {
+                document.getElementById('game-info').innerHTML = '<p>请先选择一张卡牌！</p>';
+                return;
+            }
+            
+            // 设置玩家卡牌
+            playerCard = {...selectedCard};
+            displayCard(playerCard, 'player-area', '你的选择:');
+            
+            // 随机选择对手卡牌
+            const randomIndex = Math.floor(Math.random() * marioCards.length);
+            opponentCard = {...marioCards[randomIndex]};
+            displayCard(opponentCard, 'opponent-area', '对手选择:');
+            
+            // 计算战斗结果
+            const playerTotal = playerCard.attack + calculateAbilityBonus(playerCard, 'attack');
+            const opponentTotal = opponentCard.attack + calculateAbilityBonus(opponentCard, 'attack');
+            
+            let resultText = '';
+            if (playerTotal > opponentTotal) {
+                resultText = `<p style="color: #FBD000; font-weight: bold;">你赢了！ ${playerCard.name} 击败了 ${opponentCard.name}</p>`;
+            } else if (playerTotal < opponentTotal) {
+                resultText = `<p style="color: #FF0000; font-weight: bold;">你输了！ ${opponentCard.name} 击败了 ${playerCard.name}</p>`;
+            } else {
+                resultText = `<p style="font-weight: bold;">平局！ ${playerCard.name} 和 ${opponentCard.name} 势均力敌</p>`;
+            }
+            
+            document.getElementById('game-info').innerHTML = `
+                <p>${playerCard.name} (攻击: ${playerTotal}) vs ${opponentCard.name} (攻击: ${opponentTotal})</p>
+                ${resultText}
+            `;
+        }
+        
+        // 计算能力加成
+        function calculateAbilityBonus(card, type) {
+            let bonus = 0;
+            
+            if (type === 'attack') {
+                if (card.ability.includes("额外造成1点伤害")) bonus = 1;
+                if (card.ability.includes("无视1点防御")) bonus = 1;
+                if (card.ability.includes("造成双倍伤害") && Math.random() > 0.5) bonus = card.attack;
+            }
+            
+            return bonus;
+        }
+        
+        // 显示卡牌在战斗区域
+        function displayCard(card, areaId, title) {
+            const area = document.getElementById(areaId);
+            area.innerHTML = `
+                <h2>${title}</h2>
+                <div class="card">
+                    <div class="card-image">
+                        <span style="font-size: 40px; color: ${card.color}; font-weight: bold;">${card.image}</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-stats">
+                            <div class="stat">
+                                <div class="stat-value">${card.attack}</div>
+                                <div class="stat-label">攻击</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${card.defense}</div>
+                                <div class="stat-label">防御</div>
+                            </div>
+                        </div>
+                        <div class="card-ability">${card.ability}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 事件监听
+        document.getElementById('battle-btn').addEventListener('click', startBattle);
+        document.getElementById('reset-btn').addEventListener('click', initGame);
+        
+        // 初始化游戏
+        initGame();
+    </script>
+</body>
+</html>
