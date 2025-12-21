@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>毛玻璃效果网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: url('bg.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 如果bg.png不存在，显示纯色背景 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            z-index: -2;
+            display: none; /* 默认隐藏，只在需要时显示 */
+        }
+        
+        /* 始终在顶部的毛玻璃标题 */
+        .glass-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 20px 40px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 5px 20px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .glass-header h1 {
+            font-size: 2.2rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        
+        .header-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 300;
+            margin-top: 5px;
+        }
+        
+        /* 内容区域 - 添加顶部内边距以避免内容被标题遮挡 */
+        .content-wrapper {
+            margin-top: 100px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        
+        /* 毛玻璃内容框样式 */
+        .glass-container {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.25),
+                inset 0 2px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin-bottom: 40px;
+        }
+        
+        /* 增强毛玻璃效果 */
+        .glass-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1;
+        }
+        
+        .glass-container::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            z-index: -1;
+            opacity: 0.5;
+        }
+        
+        /* 内容样式 */
+        .content {
+            color: white;
+        }
+        
+        .content h2 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .content h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8), transparent);
+            border-radius: 3px;
+        }
+        
+        .content p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .content .highlight {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid rgba(255, 255, 255, 0.5);
+            margin: 25px 0;
+        }
+        
+        /* 示例代码样式 */
+        .code-example {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+        }
+        
+        .code-example code {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* 导航菜单 */
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-menu a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .nav-menu a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            
+            .glass-header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .glass-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content-wrapper {
+                margin-top: 120px;
+                padding: 0 15px;
+            }
+            
+            .glass-container {
+                padding: 30px 20px;
+            }
+            
+            .content h2 {
+                font-size: 1.8rem;
+            }
+            
+            .content p {
+                font-size: 1.05rem;
+            }
+            
+            .nav-menu {
+                gap: 10px;
+            }
+            
+            .nav-menu a {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .glass-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .content h2 {
+                font-size: 1.5rem;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        /* 装饰元素 */
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .floating-elements div {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 15s infinite linear;
+        }
+        
+        .floating-elements div:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-elements div:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            left: 85%;
+            animation-delay: -5s;
+        }
+        
+        .floating-elements div:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 80%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(0) rotate(360deg);
+                opacity: 0.5;
+            }
+        }
+        
+        /* 本地文件提示 */
+        .local-file-note {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid rgba(255, 255, 255, 0.7);
+        }
+        
+        .local-file-note h3 {
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .local-file-note ul {
+            padding-left: 20px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        .local-file-note li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 装饰元素 -->
+    <div class="floating-elements">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    
+    <!-- 始终在顶部的毛玻璃标题 -->
+    <header class="glass-header">
+        <div class="header-title">
+            <h1>Muyuyv @ Network</h1>
+        </div>
+        <nav class="nav-menu">
+            <a href="https://www.baidu.com" target="_blank">首页</a>
+            <a href="#services">服务</a>
+            <a href="#contact">联系</a>
+        </nav>
+    </header>
+    
+    <!-- 内容区域 -->
+    <div class="content-wrapper">
+        <!-- 毛玻璃内容容器 -->
+        <div class="glass-container">
+            <div class="content">
+                <h2>Muyuyv @ Network</h2>
+                <p>欢迎来到网站这里有Mc服务器、phigros交流KOOK等</p>
+                
+
+                
+                <p>8</p>
+                
+                <h2>Test1</h2>
+                <p>1</p>
+                <p>10</p>
+
+                <p>11</p>
+                
+                <h2>Test3</h2>
+                <p>1</p>
+                <ul style="color: rgba(255, 255, 255, 0.85); margin-left: 20px; margin-bottom: 25px;">
+                    <li>2</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>5</li>
+                </ul>
+                
+                <p>6</p>
+            </div>
+        </div>
+        
+        <!-- 第二个毛玻璃容器示例 -->
+        <div class="glass-container">
+            <div class="content">
+                <h2>Test4</h2>
+                <p>1</p>
+                
+                <div class="highlight">
+                    <p>2</p>
+                </div>
+                
+                <p>2</p>
+                
+                <p>345</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 添加简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const glassContainers = document.querySelectorAll('.glass-container');
+            const navLinks = document.querySelectorAll('.nav-menu a');
+            
+            // 为毛玻璃容器添加悬停效果
+            glassContainers.forEach(container => {
+                container.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.transition = 'transform 0.3s ease';
+                });
+                
+                container.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+
+            
+            // 检查背景图像是否加载成功
+            const bgImage = new Image();
+            bgImage.src = 'bg.png';
+            bgImage.onload = function() {
+                console.log('背景图像 bg.png 加载成功');
+                // 隐藏备用背景
+                document.querySelector('body::before').style.display = 'none';
+            };
+            bgImage.onerror = function() {
+                console.log('背景图像 bg.png 未找到，显示备用背景');
+                // 显示备用背景
+                const style = document.createElement('style');
+                style.textContent = 'body::before { display: block !important; }';
+                document.head.appendChild(style);
+            };
+            
+            // 如果用户使用的是Safari，添加一个提示
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            if (isSafari) {
+                console.log("Safari浏览器检测到，毛玻璃效果可能需要-webkit-backdrop-filter前缀支持");
+            }
+        });
+    </script>
+</body>
+</html>
