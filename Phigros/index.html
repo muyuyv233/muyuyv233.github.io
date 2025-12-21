@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phigros区</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: #000;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+        
+        .title {
+            color: #fff;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        .content {
+            margin-top: 70px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .glass-card {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">Phigros区</div>
+    </div>
+    
+    <div class="content">
+        <div class="glass-card">
+            <h3>Phigros</h3>
+            <p>Phigros是一款由中国大陆独立游戏团队Pigeon Games（鸽游）开发的免费音乐节奏游戏。</p>
+
+            <h2>核心特色</h2>
+
+            <h3>1. 动态判定线系统</h3>
+            <p>- 最大特色：4种音符（蓝键、黄键、长条、红键）</p>
+            <p>- 判定线不再是固定的，它会随音乐节奏和视觉效果动态变化</p>
+
+            <h3>2. 无轨判定</h3>
+            <p>- 音符不会在固定轨道上出现，位置更自由</p>
+            <p>- 需要玩家更注重节奏感而非记忆固定位置</p>
+
+            <h3>3. 独特的评分系统</h3>
+            <p>- ACC（准确度）系统：根据打击准确度给出评级</p>
+            <p>- φ：100%准确度</p>
+            <p>- V：>95%</p>
+            <p>- S：>90%</p>
+            <p>- A：>80%</p>
+            <p>- B：>70%</p>
+            <p>- C：>60%</p>
+            <p>- F：<60%</p>
+
+            <h2>游戏模式与内容</h2>
+
+            <h3>主要模式：</h3>
+            <p>- 单曲游玩：选择曲目和难度进行游戏</p>
+            <p>- 章节系统：通过完成特定任务解锁新歌曲和章节</p>
+            <p>- 收藏系统：收集歌曲、插画、剧情片段</p>
+            <p>- 课题模式：挑战特殊任务</p>
+        </div>
+        
+        <div class="glass-card">
+            <h3>KOOK交流（非官方）：</h3>
+            <p>https://kook.vip/uZ8ERH</p>
+        </div>
+
+    </div>
+</body>
+</html>
