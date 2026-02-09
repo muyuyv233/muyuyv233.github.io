@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>气人小游戏 - 永远点不到的按钮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        .game-container {
+            text-align: center;
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .taunt-text {
+            color: #999;
+            margin: 20px 0;
+            font-size: 18px;
+            height: 30px;
+            transition: color 0.3s ease;
+        }
+
+        /* 气人按钮样式 */
+        .annoying-btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            position: absolute;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .annoying-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .reset-btn {
+            margin-top: 50px;
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: none;
+        }
+
+        .reset-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .click-count {
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>来啊！点我啊！</h1>
+        <div class="taunt-text">有本事点到我试试😜</div>
+        <button class="annoying-btn">点我！</button>
+        <div class="click-count">尝试次数: 0</div>
+        <button class="reset-btn">重新开始找虐</button>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const annoyingBtn = document.querySelector('.annoying-btn');
+        const tauntText = document.querySelector('.taunt-text');
+        const resetBtn = document.querySelector('.reset-btn');
+        const clickCountEl = document.querySelector('.click-count');
+        const body = document.body;
+        const gameContainer = document.querySelector('.game-container');
+
+        // 游戏状态
+        let clickCount = 0;
+        let isGameOver = false;
+        const tauntMessages = [
+            "手速不行啊弟弟😝",
+            "就这？就这？🤣",
+            "你是不是眼瞎？👀",
+            "放弃吧，你点不到我的😏",
+            "菜的抠脚！🦶",
+            "是不是鼠标坏了？🖱️",
+            "哈哈哈哈笑死我了😂",
+            "你这辈子都点不到我🙃"
+        ];
+
+        // 初始化按钮位置
+        function initBtnPosition() {
+            const containerRect = gameContainer.getBoundingClientRect();
+            // 初始位置居中
+            annoyingBtn.style.left = `${containerRect.left + containerRect.width/2 - 60}px`;
+            annoyingBtn.style.top = `${containerRect.top + 150}px`;
+        }
+
+        // 随机移动按钮
+        function moveBtnRandomly() {
+            if (isGameOver) return;
+            
+            // 获取视口尺寸
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const btnWidth = annoyingBtn.offsetWidth;
+            const btnHeight = annoyingBtn.offsetHeight;
+
+            // 随机生成位置（避开边缘）
+            const randomX = Math.random() * (windowWidth - btnWidth * 2) + btnWidth;
+            const randomY = Math.random() * (windowHeight - btnHeight * 2) + btnHeight;
+
+            // 设置新位置
+            annoyingBtn.style.left = `${randomX}px`;
+            annoyingBtn.style.top = `${randomY}px`;
+
+            // 随机改变按钮文字
+            const btnTexts = ["点我！", "来啊！", "在这！", "笨蛋！", "抓不到！"];
+            annoyingBtn.textContent = btnTexts[Math.floor(Math.random() * btnTexts.length)];
+        }
+
+        // 更换嘲讽文字
+        function changeTauntText() {
+            const randomIndex = Math.floor(Math.random() * tauntMessages.length);
+            tauntText.textContent = tauntMessages[randomIndex];
+            // 随机改变文字颜色
+            tauntText.style.color = `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`;
+        }
+
+        // 增加尝试次数
+        function increaseClickCount() {
+            clickCount++;
+            clickCountEl.textContent = `尝试次数: ${clickCount}`;
+            
+            // 每5次尝试改变背景色
+            if (clickCount % 5 === 0) {
+                body.style.backgroundColor = `rgb(${Math.random()*200}, ${Math.random()*200}, ${Math.random()*200})`;
+            }
+
+            // 超高难度：尝试次数超过20次，按钮移动速度加快
+            if (clickCount > 20) {
+                annoyingBtn.style.transition = 'all 0.1s ease';
+            }
+        }
+
+        // 游戏胜利（彩蛋：极低概率点到按钮）
+        function gameWin() {
+            isGameOver = true;
+            tauntText.textContent = "卧槽！你居然点到我了！😱";
+            tauntText.style.color = "#e74c3c";
+            annoyingBtn.style.display = "none";
+            resetBtn.style.display = "block";
+            body.style.backgroundColor = "#f0f0f0";
+        }
+
+        // 重置游戏
+        function resetGame() {
+            clickCount = 0;
+            isGameOver = false;
+            clickCountEl.textContent = `尝试次数: ${clickCount}`;
+            tauntText.textContent = "有本事点到我试试😜";
+            tauntText.style.color = "#999";
+            annoyingBtn.style.display = "block";
+            resetBtn.style.display = "none";
+            annoyingBtn.style.transition = 'all 0.2s ease';
+            initBtnPosition();
+        }
+
+        // 按钮鼠标悬浮事件（核心气人逻辑）
+        annoyingBtn.addEventListener('mouseover', () => {
+            if (isGameOver) return;
+            moveBtnRandomly();
+            changeTauntText();
+            increaseClickCount();
+        });
+
+        // 按钮点击事件（彩蛋）
+        annoyingBtn.addEventListener('click', () => {
+            // 1%的概率能点到
+            const winChance = Math.random();
+            if (winChance < 0.01) {
+                gameWin();
+            } else {
+                moveBtnRandomly();
+                changeTauntText();
+                increaseClickCount();
+            }
+        });
+
+        // 重置按钮事件
+        resetBtn.addEventListener('click', resetGame);
+
+        // 初始化
+        window.addEventListener('load', initBtnPosition);
+        // 窗口大小改变时重新计算位置
+        window.addEventListener('resize', () => {
+            if (!isGameOver) initBtnPosition();
+        });
+    </script>
+</body>
+</html>
